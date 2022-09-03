@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.lovegu.emos.api.db.dao.TbAmectTypeDao">
+    <select id="searchAllAmectType" resultType="xyz.lovegu.emos.api.db.dataobject.TbAmectTypeDO">
+        SELECT id,
+               type,
+               money,
+               systemic
+        FROM tb_amect_type
+    </select>
+</mapper>

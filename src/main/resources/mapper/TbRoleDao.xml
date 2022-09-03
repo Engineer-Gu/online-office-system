@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.lovegu.emos.api.db.dao.TbRoleDao">
+    <select id="searchAllRole" resultType="HashMap">
+        SELECT id,
+               role_name AS roleName
+        FROM tb_role ORDER BY id
+    </select>
+    <select id="searchById" parameterType="int" resultType="HashMap">
+        SELECT
+            id,
+            role_name AS roleName,
+            permissions,
+            `desc`,
+            default_permissions AS defaultPermissions
+        FROM tb_role
+        WHERE id = #{id}
+    </select>
+    <select id="searchRoleByList" parameterType="Hashmap" resultType="Hashmap">
+        SELECT DISTINCT r.id, r.role_name AS roleName, COUNT(r.permissions) AS permissionCount ,
+                        GROUP_CONCAT(u.`name`) AS users,
+                        r.`desc`, r.systemic
+        FROM tb_role r
+                 INNER JOIN tb_user u
+                            ON JSON_CONTAINS (u.role, CONVERT (r.id, CHAR))
+        <if test="roleName!=null">
+            AND r.role_name LIKE "%${roleName}%"
+        </if>
+        <if test="permissions!=null">
+            AND r.permissions = #{permissions}
+        </if>
+        <if test="desc!=null">
+            AND r.`desc` = #{desc}
+        </if>
+        <if test="systemic!=null">
+            AND r.systemic = #{systemic}
+        </if>
+        GROUP BY r.id ASC
+    </select>
+    <insert id="insertRole" parameterType="xyz.lovegu.emos.api.db.dataobject.TbRoleDO">
+        INSERT INTO tb_role SET
+        <if test="roleName!=null">
+            role_name = #{roleName},
+        </if>
+        <if test="permissions!=null">
+            permissions = #{permissions},
+        </if>
+        <if test="desc!=null">
+            `desc` = #{desc},
+        </if>
+        <if test="systemic!=null">
+            systemic = #{systemic}
+        </if>
+    </insert>
+    <update id="updateRole" parameterType="Hashmap">
+        UPDATE tb_role SET
+        <if test="roleName!=null">
+            role_name = #{roleName},
+        </if>
+        <if test="permissions!=null">
+            permissions = #{permissions},
+        </if>
+        <if test="desc!=null">
+            `desc` = #{desc},
+        </if>
+        <if test="defaultPermissions!=null">
+            default_permissions = #{defaultPermissions},
+        </if>
+        <if test="systemic!=null">
+            systemic = #{systemic},
+        </if>
+        id=id
+        WHERE id=#{roleId}
+    </update>
+    <delete id="deleteRoleByIds" parameterType="Hashmap">
+        DELETE FROM tb_role WHERE id IN
+        <foreach collection="array" open="(" separator="," close=")" item="one">
+            #{one}
+        </foreach>
+    </delete>
+</mapper>
