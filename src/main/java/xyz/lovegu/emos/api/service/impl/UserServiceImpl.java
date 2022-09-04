@@ -191,4 +191,10 @@ public class UserServiceImpl implements UserService {
         }
         return openId;
     }
+
+    @Override
+    public ArrayList<String> searchUserRoles(int userId) {
+        ArrayList<String> list = userDao.searchUserRoles(userId);
+        return list;
+    }
 }

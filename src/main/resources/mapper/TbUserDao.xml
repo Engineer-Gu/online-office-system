@@ -207,4 +207,10 @@
         status = 2
         WHERE id = #{userId}
     </update>
+    <select id="searchUserRoles" parameterType="int" resultType="String">
+        SELECT r.role_name AS roleName
+        FROM tb_user u
+                 JOIN tb_role r ON JSON_CONTAINS ( u.role, CONVERT ( r.id, CHAR ) )
+        WHERE u.id=#{userId}
+    </select>
 </mapper>
